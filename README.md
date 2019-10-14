@@ -2,6 +2,7 @@
 
 This project serves as a guide to help you build an application with Persephony. Specifically, the project will:
 
+- Put incoming calls into a queue
 - Remove a call from a call queue and interact with the dequeue call   
 
 ## Setting up your new app within your Persephony account
