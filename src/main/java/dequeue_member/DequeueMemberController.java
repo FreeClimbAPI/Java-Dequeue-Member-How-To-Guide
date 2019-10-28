@@ -1,7 +1,7 @@
 /* 
  * 1. RUN PROJECT WITH COMMAND: 
  *    `gradle build && java -Dserver.port=0080 -jar build/libs/gs-spring-boot-0.1.0.jar`
- * 2. CALL PERSEPHONY NUMBER ASSOCIATED WITH THIS Persephony App (CONFIGURED IN PERSEPHONY DASHBOARD)
+ * 2. CALL FreeClimb NUMBER ASSOCIATED WITH THIS FreeClimb App (CONFIGURED IN FreeClimb DASHBOARD)
  * 3. RUN CURL COMMAND TO GET LIST OF QUEUES:
  *    `curl {baseUrl}/queues`
  * 4. EXPECT JSON TO BE RETURNED:
@@ -36,19 +36,19 @@
 
 package main.java.dequeue_member;
 
-import com.vailsys.persephony.api.PersyClient;
-import com.vailsys.persephony.api.PersyException;
-import com.vailsys.persephony.api.call.CallStatus;
-import com.vailsys.persephony.api.queue.Queue;
-import com.vailsys.persephony.api.queue.QueueCreateOptions;
+import com.vailsys.freeclimb.api.FreeClimbClient;
+import com.vailsys.freeclimb.api.FreeClimbException;
+import com.vailsys.freeclimb.api.call.CallStatus;
+import com.vailsys.freeclimb.api.queue.Queue;
+import com.vailsys.freeclimb.api.queue.QueueCreateOptions;
 
-import com.vailsys.persephony.percl.PerCLScript;
-import com.vailsys.persephony.percl.Say;
-import com.vailsys.persephony.percl.Language;
-import com.vailsys.persephony.percl.Pause;
-import com.vailsys.persephony.percl.Enqueue;
+import com.vailsys.freeclimb.percl.PerCLScript;
+import com.vailsys.freeclimb.percl.Say;
+import com.vailsys.freeclimb.percl.Language;
+import com.vailsys.freeclimb.percl.Pause;
+import com.vailsys.freeclimb.percl.Enqueue;
 
-import com.vailsys.persephony.webhooks.application.ApplicationVoiceCallback;
+import com.vailsys.freeclimb.webhooks.application.ApplicationVoiceCallback;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,21 +59,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vailsys.persephony.webhooks.queue.QueueWaitCallback;
-import com.vailsys.persephony.webhooks.percl.GetDigitsActionCallback;
-import com.vailsys.persephony.percl.GetDigits;
-import com.vailsys.persephony.percl.GetDigitsNestable;
-import com.vailsys.persephony.percl.Hangup;
-import com.vailsys.persephony.percl.Dequeue;
-import com.vailsys.persephony.webhooks.queue.QueueActionCallback;
+import com.vailsys.freeclimb.webhooks.queue.QueueWaitCallback;
+import com.vailsys.freeclimb.webhooks.percl.GetDigitsActionCallback;
+import com.vailsys.freeclimb.percl.GetDigits;
+import com.vailsys.freeclimb.percl.GetDigitsNestable;
+import com.vailsys.freeclimb.percl.Hangup;
+import com.vailsys.freeclimb.percl.Dequeue;
+import com.vailsys.freeclimb.webhooks.queue.QueueActionCallback;
 
 import java.util.LinkedList;
 
-import com.vailsys.persephony.api.queue.QueueList;
+import com.vailsys.freeclimb.api.queue.QueueList;
 
 import java.util.ArrayList;
-import com.vailsys.persephony.api.queue.member.Member;
-import com.vailsys.persephony.api.queue.member.MemberList;
+import com.vailsys.freeclimb.api.queue.member.Member;
+import com.vailsys.freeclimb.api.queue.member.MemberList;
 
 @RestController
 public class DequeueMemberController {
@@ -82,9 +82,9 @@ public class DequeueMemberController {
   private String accountId = System.getenv("ACCOUNT_ID");
   private String authToken = System.getenv("AUTH_TOKEN");
 
-  // To properly communicate with Persephony's API, set your Persephony app's
+  // To properly communicate with FreeClimb's API, set your FreeClimb app's
   // VoiceURL endpoint to '{yourApplicationURL}/InboundCall' for this example
-  // Your Persephony app can be configured in the Persephony Dashboard
+  // Your FreeClimb app can be configured in the FreeClimb Dashboard
   @RequestMapping(value = {
       "/InboundCall" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<?> inboundCall(@RequestBody String request) {
@@ -92,8 +92,8 @@ public class DequeueMemberController {
     PerCLScript script = new PerCLScript();
 
     try {
-      // Create a PersyClient object
-      PersyClient client = new PersyClient(accountId, authToken);
+      // Create a FreeClimbClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, authToken);
 
       if (request != null) {
         // Convert the JSON into a request object
@@ -128,7 +128,7 @@ public class DequeueMemberController {
           script.add(enqueue);
         }
       }
-    } catch (PersyException pe) {
+    } catch (FreeClimbException pe) {
       System.out.println(pe.getMessage());
     }
 
@@ -165,7 +165,7 @@ public class DequeueMemberController {
 
         // Add PerCL getdigits script to PerCL container
         script.add(digits);
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
@@ -208,7 +208,7 @@ public class DequeueMemberController {
           // Add PerCL getdgitis script to PerCL container
           script.add(digits);
         }
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
@@ -237,7 +237,7 @@ public class DequeueMemberController {
 
         // Create and add PerCL hangup script to PerCL container
         script.add(new Hangup());
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
@@ -250,7 +250,7 @@ public class DequeueMemberController {
   public ArrayList<Queue> listQueues() {
 
     try {
-      PersyClient client = new PersyClient(accountId, authToken); // Create PersyClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
 
       // Invoke get method to retrieve the first page of queues with a matching alias
       QueueList queueList = client.queues.get();
@@ -270,7 +270,7 @@ public class DequeueMemberController {
         }
         return queues;
       }
-    } catch (PersyException pe) {
+    } catch (FreeClimbException pe) {
       System.out.println(pe.getMessage());
     }
 
@@ -280,7 +280,7 @@ public class DequeueMemberController {
   @RequestMapping("/queueMembers")
   public ArrayList<Member> listQueueMembers(String queueId) {
     try {
-      PersyClient client = new PersyClient(accountId, authToken); // Create PersyClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
 
       // String queueId = "QU95f7549b318d505a8a38b0773746de583c30fb6a";
       // Invoke get method to retrieve initial list of queue member information
@@ -304,7 +304,7 @@ public class DequeueMemberController {
 
         return list;
       }
-    } catch (PersyException pe) {
+    } catch (FreeClimbException pe) {
       System.out.println(pe.getMessage());
     }
 
@@ -314,14 +314,14 @@ public class DequeueMemberController {
   @RequestMapping("/dequeueQueueMember")
   public Member dequeueQueueMember(String queueId, String callId) {
     try {
-      PersyClient client = new PersyClient(accountId, authToken); // Create PersyClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
 
       // Invoke update method to dequeue queued call
       Member member = client.queues.getMembersRequester(queueId).dequeue(callId);
 
       // Can examine CallId, DateEnqueued, Position, URI, and WaitTime for this member
       return member;
-    } catch (PersyException pe) {
+    } catch (FreeClimbException pe) {
       System.out.println(pe.getMessage());
     }
     return null;
