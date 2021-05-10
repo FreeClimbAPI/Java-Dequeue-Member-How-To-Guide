@@ -77,10 +77,10 @@ import com.vailsys.freeclimb.api.queue.member.MemberList;
 
 @RestController
 public class DequeueMemberController {
-  // Get base URL, accountID, and authToken from environment variables
+  // Get base URL, accountID, and apiKey from environment variables
   private String baseUrl = System.getenv("HOST");
   private String accountId = System.getenv("ACCOUNT_ID");
-  private String authToken = System.getenv("AUTH_TOKEN");
+  private String apiKey = System.getenv("API_KEY");
 
   // To properly communicate with FreeClimb's API, set your FreeClimb app's
   // VoiceURL endpoint to '{yourApplicationURL}/InboundCall' for this example
@@ -93,7 +93,7 @@ public class DequeueMemberController {
 
     try {
       // Create a FreeClimbClient object
-      FreeClimbClient client = new FreeClimbClient(accountId, authToken);
+      FreeClimbClient client = new FreeClimbClient(accountId, apiKey);
 
       if (request != null) {
         // Convert the JSON into a request object
@@ -250,7 +250,7 @@ public class DequeueMemberController {
   public ArrayList<Queue> listQueues() {
 
     try {
-      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, apiKey); // Create FreeClimbClient object
 
       // Invoke get method to retrieve the first page of queues with a matching alias
       QueueList queueList = client.queues.get();
@@ -280,7 +280,7 @@ public class DequeueMemberController {
   @RequestMapping("/queueMembers")
   public ArrayList<Member> listQueueMembers(String queueId) {
     try {
-      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, apiKey); // Create FreeClimbClient object
 
       // String queueId = "QU95f7549b318d505a8a38b0773746de583c30fb6a";
       // Invoke get method to retrieve initial list of queue member information
@@ -314,7 +314,7 @@ public class DequeueMemberController {
   @RequestMapping("/dequeueQueueMember")
   public Member dequeueQueueMember(String queueId, String callId) {
     try {
-      FreeClimbClient client = new FreeClimbClient(accountId, authToken); // Create FreeClimbClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, apiKey); // Create FreeClimbClient object
 
       // Invoke update method to dequeue queued call
       Member member = client.queues.getMembersRequester(queueId).dequeue(callId);
